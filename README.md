@@ -19,10 +19,11 @@ pip3 install --upgrade pynvim
 
 ## Install YouCompleteMe
 
-brew install cmake python go nodejs
-cd ~/.config/nvim/plugged/youcompleteme
-./install.py --clangd-completer
+- brew install cmake python go nodejs
+- cd ~/.config/nvim/plugged/youcompleteme
+- ./install.py --clangd-completer
 
 ## Ruby
-gem install solargraph
-gem install neovim
+
+- gem install solargraph
+- gem install neovim
