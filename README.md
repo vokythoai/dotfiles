@@ -11,11 +11,11 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 ## Install python 2 3
 
-pip2 install pynvim
-pip3 install pynvim
+- pip2 install pynvim
+- pip3 install pynvim
 
-pip2 install --upgrade pynvim
-pip3 install --upgrade pynvim
+- pip2 install --upgrade pynvim
+- pip3 install --upgrade pynvim
 
 ## Install YouCompleteMe
 
