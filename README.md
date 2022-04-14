@@ -27,3 +27,14 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 - gem install solargraph
 - gem install neovim
+
+## Install fish
+
+- Install fish shell
+- Install Oh my fish
+
+- Set RVM for fish shell
+  curl -L --create-dirs -o ~/.config/fish/functions/rvm.fish https://raw.github.com/lunks/fish-nuggets/master/functions/rvm.fish
+
+- Set fish shell as defaul shell
+  chsh -s $(which fish)
