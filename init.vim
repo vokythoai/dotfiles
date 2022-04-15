@@ -58,7 +58,7 @@ Plug 'SirVer/ultisnips'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
-Plug 'kyazdani42/nvim-web-devicons'
+Plug 'ryanoasis/vim-devicons'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'tpope/vim-commentary'
@@ -72,6 +72,7 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'glepnir/lspsaga.nvim'
 Plug 'folke/lsp-colors.nvim'
 
+Plug 'tpope/vim-surround'
 Plug 'chrisbra/csv.vim'
 Plug 'othree/html5.vim', { 'for': 'html'}
 Plug 'ap/vim-css-color', { 'for': ['scss', 'css'] }
@@ -262,24 +263,7 @@ set t_Co=256
 set guioptions=egmrti
 set gfn=FiraCode\ 10
 
-if has("gui_running")
-  if has("gui_mac") || has("gui_macvim")
-    set guifont=Fira Code:h12
-    set transparency=7
-  endif
-else
-  let g:CSApprox_loaded = 1
-
-  " IndentLine
-  let g:indentLine_enabled = 1
-  let g:indentLine_concealcursor = ''
-  let g:indentLine_char = '┆'
-  let g:indentLine_faster = 1
-
-
-endif
-
-
+set guifont=Fira\ Code:h12
 
 "" Disable the blinking cursor.
 set gcr=a:blinkon0
@@ -334,14 +318,6 @@ cnoreabbrev Q q
 cnoreabbrev Qall qall
 
 "" NERDTree configuration
-let g:NERDTreeChDirMode=2
-let g:NERDTreeIgnore=['node_modules','\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
-let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
-let g:NERDTreeShowBookmarks=1
-let g:nerdtree_tabs_focus_on_files=1
-let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
-let g:NERDTreeWinSize = 50
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite,*node_modules/
 nnoremap <silent> <F2> :NERDTreeFind<CR>
 nnoremap <silent> <F3> :NERDTreeToggle<CR>
 
@@ -803,20 +779,25 @@ EOF
 
 "Ruby treesitter
 
+" lua << EOF
+" require'nvim-treesitter.configs'.setup {
+"   ensure_installed = "all",
+"   highlight = {
+"     enable = true,
+"     disable = {},
+"   },
+"   indent = {
+"     enable = false,
+"     disable = {},
+"   },
+"   additional_vim_regex_highlighting = false
+" }
+" EOF
+
 lua << EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "all",
-  highlight = {
-    enable = true,
-    disable = {},
-  },
-  indent = {
-    enable = false,
-    disable = {},
-  },
-  additional_vim_regex_highlighting = false
-}
+require'nvim-treesitter.configs'.setup {}
 EOF
+
 
 " Find files using Telescope command-line sugar.
 nnoremap <silent>ff <cmd>Telescope find_files<cr>
@@ -829,20 +810,6 @@ nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-
-lua << EOF
-require'nvim-web-devicons'.setup {
- override = {
-  zsh = {
-    icon = "",
-    color = "#428850",
-    cterm_color = "65",
-    name = "Zsh"
-  }
- };
- default = true;
-}
-EOF
 
 let g:clipboard = {
   \   'name': 'xclip-xfce4-clipman',
@@ -859,24 +826,24 @@ let g:clipboard = {
 
 
 " lua << EOF
-" local saga = require 'lspsaga'
+"  local saga = require 'lspsaga'
 
-" saga.init_lsp_saga {
-"   error_sign = '',
-"   warn_sign = '',
-"   hint_sign = '',
-"   infor_sign = '',
-"   border_style = "round",
-" }
+"  saga.init_lsp_saga {
+"    error_sign = '',
+"    warn_sign = '',
+"    hint_sign = '',
+"    infor_sign = '',
+"    border_style = "round",
+"  }
 " EOF
 
-" nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
-" nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
-" inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
-" nnoremap <silent> gh <Cmd>Lspsaga lsp_finder<CR>
-" nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
-" nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
-"
+nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
+nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
+inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
+nnoremap <silent> gh <Cmd>Lspsaga lsp_finder<CR>
+nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+
 " Resize window
 nmap <C-w><left> <C-w><
 nmap <C-w><right> <C-w>>
