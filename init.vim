@@ -55,15 +55,13 @@ Plug 'junegunn/gv.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'majutsushi/tagbar'
 Plug 'SirVer/ultisnips'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
 Plug 'ryanoasis/vim-devicons'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'tpope/vim-commentary'
 
-Plug 'valloric/youcompleteme'
+" Plug 'valloric/youcompleteme'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -117,7 +115,8 @@ Plug 'honza/vim-snippets'
 "" Go Lang Bundle
 Plug 'fatih/vim-go', {'do': ':GoInstallBinaries'}
 
-
+let g:go_df_mode='gopls'
+let g:go_info_mode='gopls'
 " html
 "" HTML Bundle
 Plug 'hail2u/vim-css3-syntax'
@@ -210,9 +209,9 @@ set fileencodings=utf-8
 set backspace=indent,eol,start
 
 "" Tabs. May be overridden by autocmd rules
-set tabstop=4
+set tabstop=2
 set softtabstop=0
-set shiftwidth=4
+set shiftwidth=2
 set expandtab
 
 "" Map leader to ,
@@ -536,7 +535,7 @@ let g:go_highlight_array_whitespace_error = 0
 let g:go_highlight_trailing_whitespace_error = 0
 let g:go_highlight_extra_types = 1
 
-autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
+autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=2 shiftwidth=2 softtabstop=2
 
 augroup completion_preview_close
   autocmd!
@@ -728,8 +727,45 @@ lua << EOF
 require'lspconfig'.solargraph.setup{}
 EOF
 
+" Go LSP
+autocmd BufWritePre *.go lua OrgImports(1000)
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+autocmd FileType go setlocal omnifunc=v:lua.vim.lsp.omnifunc
+
 lua << EOF
 local nvim_lsp = require('lspconfig')
+
+util = require "lspconfig/util"
+
+  nvim_lsp.gopls.setup {
+    cmd = {"gopls", "serve"},
+    filetypes = {"go", "gomod"},
+    root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+    settings = {
+      gopls = {
+        analyses = {
+          unusedparams = true,
+        },
+        staticcheck = true,
+      },
+    },
+  }
+
+function OrgImports(wait_ms)
+  local params = vim.lsp.util.make_range_params()
+  params.context = {only = {"source.organizeImports"}}
+  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, wait_ms)
+  for _, res in pairs(result or {}) do
+    for _, r in pairs(res.result or {}) do
+      if r.edit then
+        vim.lsp.util.apply_workspace_edit(r.edit, "UTF-8")
+      else
+        vim.lsp.buf.execute_command(r.command)
+      end
+    end
+  end
+end
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -778,21 +814,19 @@ end
 EOF
 
 "Ruby treesitter
-
-" lua << EOF
-" require'nvim-treesitter.configs'.setup {
-"   ensure_installed = "all",
-"   highlight = {
-"     enable = true,
-"     disable = {},
-"   },
-"   indent = {
-"     enable = false,
-"     disable = {},
-"   },
-"   additional_vim_regex_highlighting = false
-" }
-" EOF
+lua << EOF
+ require'nvim-treesitter.configs'.setup {
+   ensure_installed = "maintained",
+   highlight = {
+     enable = true
+   },
+   indent = {
+     enable = true
+   }
+ }
+EOF
+ " vim.opt.foldmethod = 'expr'
+ " vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {}
@@ -824,17 +858,10 @@ let g:clipboard = {
   \   'cache_enabled': 1,
   \ }
 
-
 " lua << EOF
 "  local saga = require 'lspsaga'
 
-"  saga.init_lsp_saga {
-"    error_sign = '',
-"    warn_sign = '',
-"    hint_sign = '',
-"    infor_sign = '',
-"    border_style = "round",
-"  }
+"  saga.init_lsp_saga {}
 " EOF
 
 nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
@@ -843,6 +870,8 @@ inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
 nnoremap <silent> gh <Cmd>Lspsaga lsp_finder<CR>
 nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
 nnoremap <silent> gr <Cmd>Lspsaga rename<CR>
+nnoremap <silent> <C-g> <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
+tnoremap <silent> <C-g> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
 
 " Resize window
 nmap <C-w><left> <C-w><
