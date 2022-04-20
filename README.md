@@ -1,9 +1,10 @@
 # vimconfig
-Nvim config with tmux
+Nvim config with tmux, for golang and ruby language
 
-2 files config for tmux and neovim
+3 files config for tmux and neovim
 - tmux.conf
 - init.vim
+- Oh my fish for fish shell
 
 # Mac setup
 ## Install TPM for Tmux
