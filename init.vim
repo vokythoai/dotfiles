@@ -12,7 +12,7 @@ endif
 
 let g:vim_bootstrap_langs = "go,html,javascript,ruby,rust,typescript"
 let g:vim_bootstrap_editor = "nvim"				" nvim or vim
-let g:vim_bootstrap_theme = "dracula"
+let g:vim_bootstrap_theme = "onedark"
 let g:vim_bootstrap_frams = ""
 
 if !filereadable(vimplug_exists)
@@ -37,18 +37,18 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'majutsushi/tagbar'
-Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'mhinz/vim-signify'
 Plug 'majutsushi/tagbar'
 Plug 'ryanoasis/vim-devicons'
 " Telescope
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-lua/plenary.nvim'
+" Theme 
+Plug 'joshdick/onedark.vim'
 
 Plug 'tpope/vim-commentary'
 Plug 'norcalli/nvim-colorizer.lua'
@@ -65,8 +65,6 @@ Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
-" COC LSP Support
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'tpope/vim-surround'
 Plug 'chrisbra/csv.vim'
@@ -124,14 +122,12 @@ Plug 'mattn/emmet-vim'
 "" Javascript Bundle
 Plug 'jelera/vim-javascript-syntax'
 
-
 " ruby
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
 Plug 'tpope/vim-projectionist'
 Plug 'thoughtbot/vim-rspec'
 Plug 'ecomba/vim-ruby-refactoring', {'tag': 'main'}
-
 
 " rust
 " Vim racer
@@ -228,13 +224,14 @@ let g:session_command_aliases = 1
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
-syntax on
+if has("syntax")
+  syntax on
+endif
 set ruler
 set number
 
 let no_buffers_menu=1
-colorscheme dracula
-
+colorscheme onedark
 
 " Better command line completion
 set wildmenu
@@ -757,7 +754,7 @@ end
 
 EOF
 
-"Ruby treesitter
+" Config Treesitter
 lua << EOF
  require'nvim-treesitter.configs'.setup {
    ensure_installed = "maintained",
@@ -844,13 +841,17 @@ require 'colorizer'.setup({
 }, { mode = 'foreground' })
 
 require 'colorizer'.setup {
-  '*'; -- Highlight all files, but customize some others.
+  'css'; -- Highlight all files, but customize some others.
+  'javascript';
+  'scss';
   css = { rgb_fn = true; }; -- Enable parsing rgb(...) functions in css
   html = { names = false; } -- Disable parsing "names" like Blue or Gray
 }
 
 require 'colorizer'.setup {
-  '*'; -- Highlight all files, but customize some others.
+  'css';
+  'javascript';
+  'scss';
   '!vim'; -- Exclude vim from highlighting.
   -- Exclusion Only makes sense if '*' is specified!
 }
@@ -928,3 +929,66 @@ lua << EOF
     capabilities = capabilities
   }
 EOF
+
+function! SyntaxAttr()
+   let synid = ""
+   let guifg = ""
+   let guibg = ""
+   let gui   = ""
+
+   let id1  = synID(line("."), col("."), 1)
+   let tid1 = synIDtrans(id1)
+
+   if synIDattr(id1, "name") != ""
+  let synid = "group: " . synIDattr(id1, "name")
+  if (tid1 != id1)
+       let synid = synid . '->' . synIDattr(tid1, "name")
+  endif
+  let id0 = synID(line("."), col("."), 0)
+  if (synIDattr(id1, "name") != synIDattr(id0, "name"))
+       let synid = synid .  " (" . synIDattr(id0, "name")
+       let tid0 = synIDtrans(id0)
+       if (tid0 != id0)
+      let synid = synid . '->' . synIDattr(tid0, "name")
+       endif
+       let synid = synid . ")"
+  endif
+   endif
+
+   " Use the translated id for all the color & attribute lookups; the linked id yields blank values.
+   if (synIDattr(tid1, "fg") != "" )
+  let guifg = " guifg=" . synIDattr(tid1, "fg") . "(" . synIDattr(tid1, "fg#") . ")"
+   endif
+   if (synIDattr(tid1, "bg") != "" )
+  let guibg = " guibg=" . synIDattr(tid1, "bg") . "(" . synIDattr(tid1, "bg#") . ")"
+   endif
+   if (synIDattr(tid1, "bold"     ))
+  let gui   = gui . ",bold"
+   endif
+   if (synIDattr(tid1, "italic"   ))
+  let gui   = gui . ",italic"
+   endif
+   if (synIDattr(tid1, "reverse"  ))
+  let gui   = gui . ",reverse"
+   endif
+   if (synIDattr(tid1, "inverse"  ))
+  let gui   = gui . ",inverse"
+   endif
+   if (synIDattr(tid1, "underline"))
+  let gui   = gui . ",underline"
+   endif
+   if (gui != ""                  )
+  let gui   = substitute(gui, "^,", " gui=", "")
+   endif
+
+   echohl MoreMsg
+   let message = synid . guifg . guibg . gui
+   if message == ""
+  echohl WarningMsg
+  let message = "<no syntax group here>"
+   endif
+   echo message
+   echohl None
+endfunction
+
+map -a :call SyntaxAttr()<CR>
