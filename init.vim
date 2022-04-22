@@ -232,7 +232,8 @@ set number
 
 let no_buffers_menu=1
 colorscheme onedark
-
+let g:onedark_hide_endofbuffer=1
+let g:onedark_termcolors=256
 " Better command line completion
 set wildmenu
 
@@ -276,7 +277,7 @@ if exists("*fugitive#statusline")
 endif
 
 " vim-airline
-let g:airline_theme = 'powerlineish'
+let g:airline_theme = 'onedark'
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
