@@ -44,11 +44,20 @@ Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-signify'
 Plug 'majutsushi/tagbar'
 Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-cucumber'
+Plug 'easymotion/vim-easymotion'
+" Animate Vim
+Plug 'camspiers/animate.vim'
+Plug 'camspiers/lens.vim'
+
 " Telescope
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-lua/plenary.nvim'
 " Theme 
 Plug 'joshdick/onedark.vim'
+" Vim smoothie
+Plug 'psliwka/vim-smoothie'
 
 Plug 'tpope/vim-commentary'
 Plug 'norcalli/nvim-colorizer.lua'
@@ -195,8 +204,9 @@ set softtabstop=0
 set shiftwidth=2
 set expandtab
 
-"" Map leader to ,
+"" Map leader to space
 let mapleader=','
+nnoremap <SPACE> <Nop>
 
 "" Enable hidden buffers
 set hidden
@@ -209,12 +219,7 @@ set smartcase
 
 set fileformats=unix,dos,mac
 
-if exists('$SHELL')
-    set shell=$SHELL
-else
-    set shell=/bin/sh
-endif
-
+set shell=/bin/sh
 " session management
 let g:session_directory = "~/.config/nvim/session"
 let g:session_autoload = "no"
@@ -323,11 +328,11 @@ command! FixWhitespace :%s/\s\+$//e
 "" Functions
 "*****************************************************************************
 if !exists('*s:setupWrapping')
-  function s:setupWrapping()
-    set wrap
-    set wm=2
-    set textwidth=79
-  endfunction
+function s:setupWrapping()
+  set wrap
+  set wm=2
+  set textwidth=79
+endfunction
 endif
 
 "*****************************************************************************
@@ -335,27 +340,27 @@ endif
 "*****************************************************************************
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
-  autocmd!
-  autocmd BufEnter * :syntax sync maxlines=200
+autocmd!
+autocmd BufEnter * :syntax sync maxlines=200
 augroup END
 
 "" Remember cursor position
 augroup vimrc-remember-cursor-position
-  autocmd!
-  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+autocmd!
+autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
 "" txt
 augroup vimrc-wrapping
-  autocmd!
-  autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+autocmd!
+autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
 augroup END
 
 "" make/cmake
 augroup vimrc-make-cmake
-  autocmd!
-  autocmd FileType make setlocal noexpandtab
-  autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
+autocmd!
+autocmd FileType make setlocal noexpandtab
+autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
 augroup END
 
 set autoread
@@ -870,8 +875,8 @@ lua << EOF
       -- REQUIRED - you must specify a snippet engine
       expand = function(args)
         vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-       -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        require('snippy').expand_snippet(args.body) -- For `snippy` users.
         vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
       end,
     },
@@ -891,7 +896,7 @@ lua << EOF
       { name = 'vsnip' }, -- For vsnip users.
       -- { name = 'luasnip' }, -- For luasnip users.
       { name = 'ultisnips' }, -- For ultisnips users.
-      -- { name = 'snippy' }, -- For snippy users.
+      { name = 'snippy' }, -- For snippy users.
     }, {
       { name = 'buffer' },
     })
@@ -931,65 +936,6 @@ lua << EOF
   }
 EOF
 
-function! SyntaxAttr()
-   let synid = ""
-   let guifg = ""
-   let guibg = ""
-   let gui   = ""
-
-   let id1  = synID(line("."), col("."), 1)
-   let tid1 = synIDtrans(id1)
-
-   if synIDattr(id1, "name") != ""
-  let synid = "group: " . synIDattr(id1, "name")
-  if (tid1 != id1)
-       let synid = synid . '->' . synIDattr(tid1, "name")
-  endif
-  let id0 = synID(line("."), col("."), 0)
-  if (synIDattr(id1, "name") != synIDattr(id0, "name"))
-       let synid = synid .  " (" . synIDattr(id0, "name")
-       let tid0 = synIDtrans(id0)
-       if (tid0 != id0)
-      let synid = synid . '->' . synIDattr(tid0, "name")
-       endif
-       let synid = synid . ")"
-  endif
-   endif
-
-   " Use the translated id for all the color & attribute lookups; the linked id yields blank values.
-   if (synIDattr(tid1, "fg") != "" )
-  let guifg = " guifg=" . synIDattr(tid1, "fg") . "(" . synIDattr(tid1, "fg#") . ")"
-   endif
-   if (synIDattr(tid1, "bg") != "" )
-  let guibg = " guibg=" . synIDattr(tid1, "bg") . "(" . synIDattr(tid1, "bg#") . ")"
-   endif
-   if (synIDattr(tid1, "bold"     ))
-  let gui   = gui . ",bold"
-   endif
-   if (synIDattr(tid1, "italic"   ))
-  let gui   = gui . ",italic"
-   endif
-   if (synIDattr(tid1, "reverse"  ))
-  let gui   = gui . ",reverse"
-   endif
-   if (synIDattr(tid1, "inverse"  ))
-  let gui   = gui . ",inverse"
-   endif
-   if (synIDattr(tid1, "underline"))
-  let gui   = gui . ",underline"
-   endif
-   if (gui != ""                  )
-  let gui   = substitute(gui, "^,", " gui=", "")
-   endif
-
-   echohl MoreMsg
-   let message = synid . guifg . guibg . gui
-   if message == ""
-  echohl WarningMsg
-  let message = "<no syntax group here>"
-   endif
-   echo message
-   echohl None
-endfunction
-
-map -a :call SyntaxAttr()<CR>
+" Len Animate width config
+let g:lens#disabled_filetypes = ['nerdtree', 'fzf']
+let g:lens#width_resize_min = 300
