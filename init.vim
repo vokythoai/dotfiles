@@ -43,14 +43,17 @@ Plug 'airblade/vim-gitgutter'
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-signify'
 Plug 'majutsushi/tagbar'
-Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-cucumber'
+" Icon
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'ryanoasis/vim-devicons'
+" Move file in file
 Plug 'easymotion/vim-easymotion'
+Plug 'ggandor/lightspeed.nvim'
 " Animate Vim
 Plug 'camspiers/animate.vim'
 Plug 'camspiers/lens.vim'
-
 " Telescope
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-lua/plenary.nvim'
@@ -58,10 +61,11 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'joshdick/onedark.vim'
 " Vim smoothie
 Plug 'psliwka/vim-smoothie'
-
+" Vim comment tool
 Plug 'tpope/vim-commentary'
+" Highligh css color
 Plug 'norcalli/nvim-colorizer.lua'
-
+" Vim fuzzy search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -938,4 +942,4 @@ EOF
 
 " Len Animate width config
 let g:lens#disabled_filetypes = ['nerdtree', 'fzf']
-let g:lens#width_resize_min = 300
+let g:lens#width_resize_min = 500
