@@ -1,0 +1,1 @@
+/home/thoaivo/.asdf/completions/asdf.fish
