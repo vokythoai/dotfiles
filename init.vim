@@ -136,7 +136,6 @@ Plug 'mattn/emmet-vim'
 Plug 'jelera/vim-javascript-syntax'
 
 " ruby
-Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
 Plug 'tpope/vim-projectionist'
 Plug 'thoughtbot/vim-rspec'
@@ -197,7 +196,8 @@ map <S-ScrollWheelDown> <C-D>
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8
-
+" Set spell language
+set spell spelllang=en_ca
 
 "" Fix backspace indent
 set backspace=indent,eol,start

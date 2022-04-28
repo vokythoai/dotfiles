@@ -20,7 +20,7 @@ set -g theme_nerd_fonts no
 set -g theme_color_scheme dracula
 
 # alliases
-alias ls "ls -p -G"
+alias ls "exa -l -F -B -a --icons"
 alias la "ls -A"
 alias ll "ls -l"
 alias lla "ll -A"
