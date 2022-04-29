@@ -42,7 +42,6 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-signify'
-Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-cucumber'
 " Icon
@@ -71,7 +70,6 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'neovim/nvim-lspconfig'
 Plug 'tami5/lspsaga.nvim', { 'branch': 'nvim6.0' }
-
 "Nvim cmp
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -809,6 +807,7 @@ lua << EOF
 local saga = require 'lspsaga'
 saga.init_lsp_saga()
 EOF
+
 nnoremap <silent> gh :Lspsaga lsp_finder<CR>
 nnoremap <silent><leader>ca :Lspsaga code_action<CR>
 vnoremap <silent><leader>ca :<C-U>Lspsaga range_code_action<CR>

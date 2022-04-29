@@ -20,9 +20,9 @@ set -g theme_nerd_fonts no
 set -g theme_color_scheme dracula
 
 # alliases
-alias ls "exa -l -F -B -a --icons"
+alias ls "exa -l -F -B -a --tree --level=1 --icons"
 alias la "ls -A"
-alias ll "ls -l"
+alias ll "exa -l -F -B -a --tree --level=1 --icons"
 alias lla "ll -A"
 alias g git
 alias tmn "tmux new-session -s"
@@ -45,5 +45,7 @@ alias as "asdf"
 set -g PATH "$PATH:/usr/local/go/bin"
 set -g GOPATH "$HOME/go"
 set -g PATH "$PATH:$GOROOT/bin:$GOPATH/bin"
+
+# Z for directory jump
 
 source ~/.asdf/asdf.fish
