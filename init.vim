@@ -187,6 +187,7 @@ map <ScrollWheelDown> <C-E>
 map <S-ScrollWheelDown> <C-D>
 
 
+
 "*****************************************************************************
 "" Basic Setup
 "*****************************************************************************"
@@ -241,6 +242,7 @@ let no_buffers_menu=1
 colorscheme onedark
 let g:onedark_hide_endofbuffer=1
 let g:onedark_termcolors=256
+hi Normal guibg=NONE ctermbg=NONE
 " Better command line completion
 set wildmenu
 
@@ -765,7 +767,7 @@ EOF
 " Config Treesitter
 lua << EOF
  require'nvim-treesitter.configs'.setup {
-   ensure_installed = "maintained",
+   ensure_installed = "all",
    highlight = {
      enable = true
    },
@@ -941,4 +943,62 @@ EOF
 
 " Len Animate width config
 let g:lens#disabled_filetypes = ['nerdtree', 'fzf']
-let g:lens#width_resize_min = 500
+let g:lens#width_resize_min = 300
+
+" Setup vim script buffer only
+command! -nargs=? -complete=buffer -bang Bonly
+    \ :call BufOnly('<args>', '<bang>')
+command! -nargs=? -complete=buffer -bang BOnly
+    \ :call BufOnly('<args>', '<bang>')
+command! -nargs=? -complete=buffer -bang Bufonly
+    \ :call BufOnly('<args>', '<bang>')
+command! -nargs=? -complete=buffer -bang BufOnly
+    \ :call BufOnly('<args>', '<bang>')
+
+function! BufOnly(buffer, bang)
+	if a:buffer == ''
+		" No buffer provided, use the current buffer.
+		let buffer = bufnr('%')
+	elseif (a:buffer + 0) > 0
+		" A buffer number was provided.
+		let buffer = bufnr(a:buffer + 0)
+	else
+		" A buffer name was provided.
+		let buffer = bufnr(a:buffer)
+	endif
+
+	if buffer == -1
+		echohl ErrorMsg
+		echomsg "No matching buffer for" a:buffer
+		echohl None
+		return
+	endif
+
+	let last_buffer = bufnr('$')
+
+	let delete_count = 0
+	let n = 1
+	while n <= last_buffer
+		if n != buffer && buflisted(n)
+			if a:bang == '' && getbufvar(n, '&modified')
+				echohl ErrorMsg
+				echomsg 'No write since last change for buffer'
+							\ n '(add ! to override)'
+				echohl None
+			else
+				silent exe 'bdel' . a:bang . ' ' . n
+				if ! buflisted(n)
+					let delete_count = delete_count+1
+				endif
+			endif
+		endif
+		let n = n+1
+	endwhile
+
+	if delete_count == 1
+		echomsg delete_count "buffer deleted"
+	elseif delete_count > 1
+		echomsg delete_count "buffers deleted"
+	endif
+
+endfunction
