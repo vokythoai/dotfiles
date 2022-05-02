@@ -190,7 +190,6 @@ map <ScrollWheelDown> <C-E>
 map <S-ScrollWheelDown> <C-D>
 
 
-
 "*****************************************************************************
 "" Basic Setup
 "*****************************************************************************"
@@ -580,7 +579,7 @@ let g:javascript_enable_domhtmlcss = 1
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript setl tabstop=4|setl shiftwidth=4|setl expandtab softtabstop=4
+  autocmd FileType javascript setl tabstop=2|setl shiftwidth=2|setl expandtab softtabstop=2
 augroup END
 
 
@@ -803,7 +802,7 @@ EOF
 " " Config Treesitter
 lua << EOF
  require'nvim-treesitter.configs'.setup {
-   ensure_installed = "all",
+   ensure_installed = "maintained",
    highlight = {
      enable = true
    },
