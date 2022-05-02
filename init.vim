@@ -67,6 +67,9 @@ Plug 'norcalli/nvim-colorizer.lua'
 " Vim fuzzy search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+" Nodejs Typescript LSP
+" Plug 'jose-elias-alarez/null-ls.nvim'
+Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 
 Plug 'neovim/nvim-lspconfig'
 Plug 'tami5/lspsaga.nvim', { 'branch': 'nvim6.0' }
@@ -714,6 +717,7 @@ let g:rubycomplete_rails = 1
 " LSP Config
 autocmd BufWritePre *.go lua OrgImports(1000)
 autocmd FileType go setlocal omnifunc=v:lua.vim.lsp.omnifunc
+
 lua << EOF
 local nvim_lsp = require('lspconfig')
 util = require "lspconfig/util"
@@ -747,10 +751,30 @@ function OrgImports(wait_ms)
   end
 end
 
+-- LSP config for typescript
+local buf_map = function(bufnr, mode, lhs, rhs, opts)
+  vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts or {
+      silent = true,
+  })
+end
+
+nvim_lsp.tsserver.setup({
+  on_attach = function(client, bufnr)
+    client.resolved_capabilities.document_formatting = false
+    client.resolved_capabilities.document_range_formatting = false
+    local ts_utils = require("nvim-lsp-ts-utils")
+    ts_utils.setup({})
+    ts_utils.setup_client(client)
+    buf_map(bufnr, "n", "gs", ":TSLspOrganize<CR>")
+    buf_map(bufnr, "n", "gi", ":TSLspRenameFile<CR>")
+    buf_map(bufnr, "n", "go", ":TSLspImportAll<CR>")
+    on_attach(client, bufnr)
+  end,
+})
 -- LSP server config
 -- solargrap
 
-local servers = { "solargraph" }
+local servers = { "solargraph", "tsserver" }
 
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
@@ -764,7 +788,19 @@ end
 
 EOF
 
-" Config Treesitter
+"NULL-LS config
+" lua << EOF
+" local null_ls = require("null-ls")
+" null_ls.setup({
+"     sources = {
+"         null_ls.builtins.diagnostics.eslint,
+"         null_ls.builtins.code_actions.eslint,
+"         null_ls.builtins.formatting.prettier
+"     },
+"     on_attach = on_attach
+" })
+" EOF
+" " Config Treesitter
 lua << EOF
  require'nvim-treesitter.configs'.setup {
    ensure_installed = "all",
@@ -943,7 +979,7 @@ EOF
 
 " Len Animate width config
 let g:lens#disabled_filetypes = ['nerdtree', 'fzf']
-let g:lens#width_resize_min = 300
+let g:lens#width_resize_min = 500
 
 " Setup vim script buffer only
 command! -nargs=? -complete=buffer -bang Bonly

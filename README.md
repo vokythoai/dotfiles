@@ -4,6 +4,7 @@
 
 - Golang
 - Ruby
+- NodeJS/Typescript
 
 ## Dotfiles
 
@@ -37,6 +38,12 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ## LSP Golang
 
 - Install gopls for lsp
+
+## LSP Typescript
+
+- Install packages:
+  - npm install -g typescript typescript-language-server eslint prettier
+  - npm install -g typescript-language-server
 
 ## Install fish
 
