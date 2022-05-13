@@ -71,6 +71,7 @@ Plug 'junegunn/fzf.vim'
 " Plug 'jose-elias-alarez/null-ls.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 
+Plug 'williamboman/nvim-lsp-installer'
 Plug 'neovim/nvim-lspconfig'
 Plug 'tami5/lspsaga.nvim', { 'branch': 'nvim6.0' }
 "Nvim cmp
@@ -718,6 +719,16 @@ autocmd BufWritePre *.go lua OrgImports(1000)
 autocmd FileType go setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
 lua << EOF
+require("nvim-lsp-installer").setup({
+  automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
+  ui = {
+    icons = {
+      server_installed = "✓",
+      server_pending = "➜",
+      server_uninstalled = "✗"
+    }
+  }
+})
 local nvim_lsp = require('lspconfig')
 util = require "lspconfig/util"
 -- Golang LSP config
@@ -772,12 +783,15 @@ nvim_lsp.tsserver.setup({
 })
 -- LSP server config
 -- solargrap
+local servers = { "solargraph", "tsserver", "eslint", "html", "cssls", "tailwindcss" }
 
-local servers = { "solargraph", "tsserver" }
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
 	on_attach = on_attach,
+  capabilities = capabilities,
 	flags = {
 	  debounce_text_changes = 150,
 	}
@@ -787,18 +801,6 @@ end
 
 EOF
 
-"NULL-LS config
-" lua << EOF
-" local null_ls = require("null-ls")
-" null_ls.setup({
-"     sources = {
-"         null_ls.builtins.diagnostics.eslint,
-"         null_ls.builtins.code_actions.eslint,
-"         null_ls.builtins.formatting.prettier
-"     },
-"     on_attach = on_attach
-" })
-" EOF
 " " Config Treesitter
 lua << EOF
  require'nvim-treesitter.configs'.setup {
@@ -1037,3 +1039,4 @@ function! BufOnly(buffer, bang)
 	endif
 
 endfunction
+
