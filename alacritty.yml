@@ -1,10 +1,12 @@
- font:
+env:
+  TERM: xterm-256color
+font:
   normal:
-    family: MesloLGS NF
-  size: 11
+    family: MesloLGM Nerd Font Mono
+  size: 18
 
 window:
-  opacity: 0.8
+  opacity: 0.95
   padding:
     x: 0
     y: 0
@@ -17,61 +19,39 @@ scrolling:
   multiplier: 3
 
 cursor:
+  custom_cursor_colors: true
   style:
     shape: Block
     blinking: Always
-    blink-interval: 700
+    unfocused-hollow: true
+    blink-interval: 100
 
-# Using Dracula theme color
 colors:
+ # Default colors
   primary:
-    background: '#282a36'
-    foreground: '#f8f8f2'
-    bright_foreground: '#ffffff'
+    background: '0x1e1c31'
+    foreground: '0xcbe1e7'
+  # Colors the cursor will use if `custom_cursor_colors` is true
   cursor:
-    text: CellBackground
-    cursor: CellForeground
-  vi_mode_cursor:
-    text: CellBackground
-    cursor: CellForeground
-  search:
-    matches:
-      foreground: '#44475a'
-      background: '#50fa7b'
-    focused_match:
-      foreground: '#44475a'
-      background: '#ffb86c'
-    bar:
-      background: '#282a36'
-      foreground: '#f8f8f2'
-  hints:
-    start:
-      foreground: '#282a36'
-      background: '#f1fa8c'
-    end:
-      foreground: '#f1fa8c'
-      background: '#282a36'
-  line_indicator:
-    foreground: None
-    background: None
-  selection:
-    text: CellForeground
-    background: '#44475a'
+    text: '0xff271d'
+    cursor: '0xfbfcfc'
+  # Normal colors
   normal:
-    black: '#21222c'
-    red: '#ff5555'
-    green: '#50fa7b'
-    yellow: '#f1fa8c'
-    blue: '#bd93f9'
-    magenta: '#ff79c6'
-    cyan: '#8be9fd'
-    white: '#f8f8f2'
+    black:   '0x141228'
+    red:     '0xff5458'
+    green:   '0x62d196'
+    yellow:  '0xffb378'
+    blue:    '0x65b2ff'
+    magenta: '0x906cff'
+    cyan:    '0x63f2f1'
+    white:   '0xa6b3cc'
+  # Bright colors
   bright:
-    black: '#6272a4'
-    red: '#ff6e6e'
-    green: '#69ff94'
-    yellow: '#ffffa5'
-    blue: '#d6acff'
-    magenta: '#ff92df'
-    cyan: '#a4ffff'
-    white: '#ffffff'
+    black:   '0x565575'
+    red:     '0xff8080'
+    green:   '0x95ffa4'
+    yellow:  '0xffe9aa'
+    blue:    '0x91ddff'
+    magenta: '0xc991e1'
+    cyan:    '0xaaffe4'
+    white:   '0xcbe3e7'
