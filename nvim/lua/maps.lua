@@ -35,3 +35,5 @@ keymap.set('n', '<leader><space>', ':noh<Return>')
 
 -- Control-S to save file
 keymap.set('', '<C-s>', ':update<Return>')
+-- Copy file path
+keymap.set('n', 'cp', ":let @+=expand('%:p')<Return>")

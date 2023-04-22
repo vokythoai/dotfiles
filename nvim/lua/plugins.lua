@@ -23,6 +23,17 @@ packer.startup(function(use)
   use 'williamboman/mason.nvim'
   use 'williamboman/mason-lspconfig.nvim'
   use 'glepnir/lspsaga.nvim' -- LSP UIs
+  --use({
+  --  "glepnir/lspsaga.nvim",
+  --  opt = true,
+  --  branch = "main",
+  --  event = "LspAttach",
+  --  requires = {
+  --    {"nvim-tree/nvim-web-devicons"},
+  --    --Please make sure you install markdown and markdown_inline parser
+  --    {"nvim-treesitter/nvim-treesitter"}
+  --  }
+  --})
   use 'L3MON4D3/LuaSnip'
   use 'SirVer/ultisnips'
   use 'honza/vim-snippets'
