@@ -496,60 +496,44 @@ local default_plugins = {
   },
 
   {
-    {
-      "rest-nvim/rest.nvim",
-      dependencies = { { "nvim-lua/plenary.nvim" } },
-      config = function()
-        require("rest-nvim").setup({
-          -- Open request results in a horizontal split
-          result_split_horizontal = false,
-          -- Keep the http file buffer above|left when split horizontal|vertical
-          result_split_in_place = false,
-          -- stay in current windows (.http file) or change to results window (default)
-          stay_in_current_window_after_split = false,
-          -- Skip SSL verification, useful for unknown certificates
-          skip_ssl_verification = false,
-          -- Encode URL before making request
-          encode_url = true,
-          -- Highlight request on run
-          highlight = {
-            enabled = true,
-            timeout = 150,
-          },
-          result = {
-            -- toggle showing URL, HTTP info, headers at top the of result window
-            show_url = true,
-            -- show the generated curl command in case you want to launch
-            -- the same request via the terminal (can be verbose)
-            show_curl_command = false,
-            show_http_info = true,
-            show_headers = true,
-            -- table of curl `--write-out` variables or false if disabled
-            -- for more granular control see Statistics Spec
-            show_statistics = false,
-            -- executables or functions for formatting response body [optional]
-            -- set them to false if you want to disable them
-            formatters = {
-              json = "jq",
-              html = function(body)
-                return vim.fn.system({ "tidy", "-i", "-q", "-" }, body)
-              end,
-            },
-          },
-          -- Jump to request line on run
-          jump_to_request = false,
-          env_file = ".env",
-          custom_dynamic_variables = {},
-          yank_dry_run = true,
-          search_back = true,
-        })
-      end,
-      keys = {
-        {
-          "\\r",
-          "<Plug>RestNvim",
-          desc = "Test the current file",
+    "rest-nvim/rest.nvim",
+    dependencies = { { "nvim-lua/plenary.nvim", "rest-nvim/tree-sitter-http" } },
+    config = function()
+      require("rest-nvim").setup({
+        result_split_horizontal = false,
+        result_split_in_place = false,
+        stay_in_current_window_after_split = false,
+        skip_ssl_verification = false,
+        encode_url = true,
+        highlight = {
+          enabled = true,
+          timeout = 150,
         },
+        result = {
+          show_url = true,
+          show_curl_command = false,
+          show_http_info = true,
+          show_headers = true,
+          show_statistics = false,
+          formatters = {
+            json = "jq",
+            html = function(body)
+              return vim.fn.system({ "tidy", "-i", "-q", "-" }, body)
+            end,
+          },
+        },
+        jump_to_request = false,
+        env_file = ".env",
+        custom_dynamic_variables = {},
+        yank_dry_run = true,
+        search_back = true,
+      })
+    end,
+    keys = {
+      {
+        "\\r",
+        "<Plug>RestNvim",
+        desc = "Test the current file",
       },
     },
   },
@@ -595,58 +579,30 @@ local default_plugins = {
   },
 
   {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    lazy = false,
-    opts = function()
-      return require "plugins.configs.avante"
-    end,
-    -- if you want to download pre-built binary, then pass source=false. Make sure to follow instruction above.
-    -- Also note that downloading prebuilt binary is a lot faster comparing to compiling from source.
-    build = ":AvanteBuild source=false",
-    dependencies = {
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      --- The below dependencies are optional,
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-      "zbirenbaum/copilot.lua", -- for providers='copilot'
-      {
-        -- support for image pasting
-        "HakonHarnes/img-clip.nvim",
-        event = "VeryLazy",
-        opts = {
-          -- recommended settings
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-            -- required for Windows users
-            use_absolute_path = true,
-          },
-        },
-      },
-      {
-        -- Make sure to setup it properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { "markdown", "Avante" },
-        },
-        ft = { "markdown", "Avante" },
-      },
-    },
-  },
-
-  {
     "simrat39/rust-tools.nvim",
+    init = function ()
+      vim.api.nvim_create_augroup("RustFmt", { clear = true })
+      vim.api.nvim_create_autocmd("BufWritePost", {
+        pattern = "*.rs",
+        command = "silent! !rustfmt %",
+        group = "RustFmt",
+      })
+    end,
   },
 
   {
     "mfussenegger/nvim-dap",
     "m-demare/hlargs.nvim"
   },
+
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    config = function()
+      require("plugins.configs.catppuccin")
+    end
+  }
 }
 
 
